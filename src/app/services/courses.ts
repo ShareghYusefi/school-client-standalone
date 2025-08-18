@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
+import { ICourse } from '../interfaces/icourse';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Courses {
-  private courses: string[] = ['Math 101', 'Science 101', 'Biology 100'];
+  private courses: ICourse[] = [
+    { id: 1, name: 'Math', level: 101 },
+    { id: 1, name: 'Science', level: 101 },
+    { id: 1, name: 'Biology', level: 100 },
+  ];
 
   constructor() {}
 

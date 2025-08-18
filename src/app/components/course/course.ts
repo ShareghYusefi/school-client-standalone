@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { ICourse } from '../../interfaces/icourse';
 
 @Component({
-  selector: 'app-course',
+  selector: 'course',
   imports: [],
   templateUrl: './course.html',
-  styleUrl: './course.css'
+  styleUrl: './course.css',
 })
 export class Course {
-
+  @Input() course: ICourse | undefined;
 }
