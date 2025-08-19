@@ -1,4 +1,12 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  DoCheck,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ICourse } from '../../interfaces/icourse';
 
 @Component({
@@ -7,6 +15,32 @@ import { ICourse } from '../../interfaces/icourse';
   templateUrl: './course.html',
   styleUrl: './course.css',
 })
-export class Course {
+export class Course implements OnChanges, OnInit, DoCheck, OnDestroy {
   @Input() course: ICourse | undefined;
+
+  // Lifecycle hooks
+  // 1. contructor function runs first when a component is created
+  constructor() {
+    console.log('Course contructor');
+  }
+
+  // 2. ngOnChanges runs when @Input property changes from undefined to course
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Course ngOnChanges', changes);
+  }
+
+  // 3. ngOnInit runs only once after ngOnChanges: used to initialize component properties
+  ngOnInit(): void {
+    console.log('Course ngOnInit');
+  }
+
+  // 4. ngDoCheck runs after ngOnInit: used to detect and act upon changes that Angular does NOT detect on its own
+  ngDoCheck(): void {
+    console.log('Course ngDoCheck');
+  }
+
+  // 5. ngOnDestroy runs when we nagivate away from a component
+  ngOnDestroy(): void {
+    console.log('Course ngOnDestroy');
+  }
 }
