@@ -20,12 +20,12 @@ import { ICourse } from '../../interfaces/icourse';
 export class Course implements OnChanges, OnInit, DoCheck, OnDestroy {
   @Input() course: ICourse | undefined;
 
-  // define 'childEvent' to emit data for parent component
-  @Output() childEvent = new EventEmitter();
+  // define 'deleteEvent' to emit data for parent component
+  @Output() deleteEvent = new EventEmitter();
 
   // define a function for emitting the event and data
-  sendDataToParent() {
-    this.childEvent.emit(this.course?.name + ' ' + this.course?.level);
+  deleteEventTrigger(id: number) {
+    this.deleteEvent.emit(id);
   }
 
   // Lifecycle hooks

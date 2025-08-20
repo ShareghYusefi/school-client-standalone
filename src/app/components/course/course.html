@@ -2,7 +2,9 @@
 <ul>
   <li>
     {{ course?.name + " " + course?.level }}
-    <button (click)="sendDataToParent()">Send Child Data to Parent</button>
+    <button class="btn btn-danger" (click)="deleteEventTrigger(course.id)">
+      Delete
+    </button>
   </li>
 </ul>
 
