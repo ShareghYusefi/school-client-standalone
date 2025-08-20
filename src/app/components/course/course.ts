@@ -1,10 +1,12 @@
 import {
   Component,
   DoCheck,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { ICourse } from '../../interfaces/icourse';
@@ -17,6 +19,14 @@ import { ICourse } from '../../interfaces/icourse';
 })
 export class Course implements OnChanges, OnInit, DoCheck, OnDestroy {
   @Input() course: ICourse | undefined;
+
+  // define 'childEvent' to emit data for parent component
+  @Output() childEvent = new EventEmitter();
+
+  // define a function for emitting the event and data
+  sendDataToParent() {
+    this.childEvent.emit(this.course?.name + ' ' + this.course?.level);
+  }
 
   // Lifecycle hooks
   // 1. contructor function runs first when a component is created

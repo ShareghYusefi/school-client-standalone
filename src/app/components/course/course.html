@@ -1,2 +1,9 @@
 <!-- ?.name will return the name value or undefined when it does not exist -->
-<h3>{{ course?.name + " " + course?.level }}</h3>
+<ul>
+  <li>
+    {{ course?.name + " " + course?.level }}
+    <button (click)="sendDataToParent()">Send Child Data to Parent</button>
+  </li>
+</ul>
+
+<!-- trigger function to emit data for parent component -->

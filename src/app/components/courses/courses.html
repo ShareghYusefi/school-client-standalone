@@ -2,6 +2,8 @@
 <ul>
   @for (course of courses; track course.id) {
   <!-- We can pass the course object to the course component via @Input directive/property -->
-  <course [course]="course"></course>
+  <course [course]="course" (childEvent)="alertMessage($event)"></course>
   }
 </ul>
+
+<pre>{{ text }}</pre>

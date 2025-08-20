@@ -10,7 +10,7 @@ import { ICourse } from '../../interfaces/icourse';
   styleUrl: './courses.css',
 })
 export class Courses implements OnInit {
-  // ! lets typescript know that a value will be provided
+  // Non-null Assertion Operator (!) lets typescript know that a value will be provided
   courses!: ICourse[];
 
   // Dependency Injection
@@ -19,5 +19,10 @@ export class Courses implements OnInit {
   ngOnInit(): void {
     // initialize courses array with data from service class
     this.courses = this.service.getCourses();
+  }
+
+  text: any;
+  alertMessage(message: any) {
+    this.text = message;
   }
 }
