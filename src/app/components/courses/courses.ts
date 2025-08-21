@@ -25,14 +25,16 @@ export class Courses implements OnInit {
   }
 
   deleteCourse(id: number) {
-    // find the index of course with given id
-    let index = this.courses.findIndex((course) => course.id === id);
-    // index of -1 returns when no matching record is found
-    if (index === -1) {
-      return; // exits function at this line
-    }
+    this.service.deleteCourse(id).subscribe((response: ICourse) => {
+      // find course in courses array using id field
+      let course = this.courses.find((c) => c.id === response.id);
 
-    // found the course, remove it from our array
-    this.courses.splice(index, 1);
+      // if course not found, return
+      if (!course) return;
+
+      // remove the course from courses array
+      // found the course, remove it from our array
+      this.courses.splice(this.courses.indexOf(course), 1);
+    });
   }
 }
