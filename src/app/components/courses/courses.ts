@@ -18,7 +18,10 @@ export class Courses implements OnInit {
 
   ngOnInit(): void {
     // initialize courses array with data from service class
-    this.courses = this.service.getCourses();
+    // Since the getCourses() returns an Observable object, we need to use subscribe handle the data
+    this.service.getCourses().subscribe((response) => {
+      this.courses = response; // assign response (array of courses) to local courses property
+    });
   }
 
   deleteCourse(id: number) {

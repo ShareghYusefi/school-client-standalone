@@ -18,7 +18,7 @@ import { ICourse } from '../../interfaces/icourse';
   styleUrl: './course.css',
 })
 export class Course implements OnChanges, OnInit, DoCheck, OnDestroy {
-  @Input() course: ICourse | undefined;
+  @Input() course!: ICourse;
 
   // define 'deleteEvent' to emit data for parent component
   @Output() deleteEvent = new EventEmitter();
