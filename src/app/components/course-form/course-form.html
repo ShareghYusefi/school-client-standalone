@@ -1,0 +1,49 @@
+<!-- We need to bind our courseForm instance to the template form using the formGroup directive -->
+<form [formGroup]="courseForm">
+  <div class="mb-3">
+    <label for="name" class="form-label">Course name: </label>
+    <!-- We need to bind our input to a form control using the formControlName directive  -->
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      aria-describedby="nameHelp"
+      formControlName="name"
+    />
+    <div
+      *ngIf="name?.errors && name?.invalid && name?.touched"
+      class="text-danger"
+    >
+      <div *ngIf="name?.errors?.['required']">Name is required.</div>
+      <div *ngIf="name?.errors?.['minlength']">
+        Please type a minimum of 2 characters
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="level" class="form-label">Level</label>
+    <input
+      type="number"
+      class="form-control"
+      id="level"
+      formControlName="level"
+    />
+  </div>
+  <div
+    *ngIf="level?.errors && level?.invalid && level?.touched"
+    class="text-danger"
+  >
+    <div *ngIf="level?.errors?.['required']">Level is required.</div>
+    <div *ngIf="level?.errors?.['min']">Please select a number above 100</div>
+  </div>
+  <button
+    type="submit"
+    class="btn btn-primary"
+    [disabled]="courseForm.invalid"
+    (click)="onSubmit()"
+  >
+    Submit
+  </button>
+</form>
+
+<pre> {{ courseForm.value | json }}</pre>

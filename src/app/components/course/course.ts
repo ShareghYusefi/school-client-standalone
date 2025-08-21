@@ -10,10 +10,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ICourse } from '../../interfaces/icourse';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'course',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './course.html',
   styleUrl: './course.css',
 })

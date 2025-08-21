@@ -1,7 +1,10 @@
 <!-- ?.name will return the name value or undefined when it does not exist -->
 <ul>
   <li>
-    {{ course?.name + " " + course?.level }}
+    {{ course.name + " " + course.level }}
+    <a [routerLink]="['/courses', course.id]"
+      ><button class="btn btn-primary">View</button></a
+    >
     <button class="btn btn-danger" (click)="deleteEventTrigger(course.id)">
       Delete
     </button>

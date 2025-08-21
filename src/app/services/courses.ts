@@ -18,8 +18,17 @@ export class Courses {
     return this.httpClientInstance.get<ICourse[]>(this.API_URL + '/courses');
   }
 
+  getCourse(id: number): Observable<ICourse> {
+    // We can use < > to specify the type of data we expect from the API call
+    return this.httpClientInstance.get<ICourse>(
+      this.API_URL + '/courses/' + id
+    );
+  }
+
   deleteCourse(id: number): Observable<ICourse> {
     // We can use < > to specify the type of data we expect from the API call
-    return this.httpClientInstance.delete<ICourse>(this.API_URL + '/courses/' + id);
+    return this.httpClientInstance.delete<ICourse>(
+      this.API_URL + '/courses/' + id
+    );
   }
 }
