@@ -25,6 +25,22 @@ export class Courses {
     );
   }
 
+  addCourse(course: ICourse): Observable<ICourse> {
+    // We can use < > to specify the type of data we expect from the API call
+    return this.httpClientInstance.post<ICourse>(
+      this.API_URL + '/courses',
+      course
+    );
+  }
+
+  updateCourse(id: number, updatedCourse: ICourse): Observable<ICourse> {
+    // We can use < > to specify the type of data we expect from the API call
+    return this.httpClientInstance.patch<ICourse>(
+      this.API_URL + '/courses/' + id,
+      updatedCourse
+    );
+  }
+
   deleteCourse(id: number): Observable<ICourse> {
     // We can use < > to specify the type of data we expect from the API call
     return this.httpClientInstance.delete<ICourse>(

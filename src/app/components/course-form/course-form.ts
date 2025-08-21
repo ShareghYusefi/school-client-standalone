@@ -27,6 +27,7 @@ export class CourseForm implements OnInit {
   ) {
     // create a form group with two form controls: name, level
     this.courseForm = this.formBuilderInstance.group({
+      id: [0],
       name: ['', [Validators.required, Validators.minLength(2)]],
       level: ['', [Validators.required, Validators.min(100)]],
     });
@@ -44,6 +45,7 @@ export class CourseForm implements OnInit {
           (response: ICourse) => {
             // update the form with course data
             this.courseForm.patchValue({
+              id: response.id,
               name: response.name,
               level: response.level,
             });
@@ -66,8 +68,35 @@ export class CourseForm implements OnInit {
   }
 
   onSubmit() {
-    if (this.courseForm.valid) {
-      console.log(this.courseForm.value);
+    if (this.courseForm.invalid) {
+      return;
+    }
+
+    // check if we have an id in our URL
+    let id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      // update the course data
+      this.service.updateCourse(parseInt(id), this.courseForm.value).subscribe(
+        (response: ICourse) => {
+          console.log('Course Updated:', response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    } else {
+      // create a new course
+      this.service.addCourse(this.courseForm.value).subscribe(
+        (response: ICourse) => {
+          console.log('Course Added:', response);
+
+          // reset form
+          this.courseForm.reset();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }
 }
