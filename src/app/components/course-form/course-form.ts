@@ -17,6 +17,7 @@ import { ICourse } from '../../interfaces/icourse';
   styleUrl: './course-form.css',
 })
 export class CourseForm implements OnInit {
+  step = 1; // current step
   courseForm!: FormGroup;
 
   // We can use a FormBuilder instance via Dependency injection to create a form group
@@ -27,10 +28,30 @@ export class CourseForm implements OnInit {
   ) {
     // create a form group with two form controls: name, level
     this.courseForm = this.formBuilderInstance.group({
-      id: [0],
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      level: ['', [Validators.required, Validators.min(100)]],
+      step1: this.formBuilderInstance.group({
+        id: [0],
+        name: ['', [Validators.required, Validators.minLength(2)]],
+      }),
+      step2: this.formBuilderInstance.group({
+        level: ['', [Validators.required, Validators.min(100)]],
+      }),
     });
+  }
+
+  getStepGroup(step: number): FormGroup {
+    return this.courseForm.get(`step${step}`) as FormGroup;
+  }
+
+  next() {
+    if (this.getStepGroup(this.step).valid) {
+      this.step++;
+    } else {
+      this.getStepGroup(this.step).markAllAsTouched();
+    }
+  }
+
+  prev() {
+    this.step--;
   }
 
   ngOnInit(): void {
@@ -45,9 +66,13 @@ export class CourseForm implements OnInit {
           (response: ICourse) => {
             // update the form with course data
             this.courseForm.patchValue({
-              id: response.id,
-              name: response.name,
-              level: response.level,
+              step1: {
+                id: response.id,
+                name: response.name,
+              },
+              step2: {
+                level: response.level,
+              },
             });
           },
           (error) => {
@@ -60,11 +85,11 @@ export class CourseForm implements OnInit {
 
   // getter for loginFrom name formControl
   get name() {
-    return this.courseForm.get('name');
+    return this.getStepGroup(1).get('name');
   }
 
   get level() {
-    return this.courseForm.get('level');
+    return this.getStepGroup(2).get('level');
   }
 
   onSubmit() {
@@ -72,11 +97,20 @@ export class CourseForm implements OnInit {
       return;
     }
 
+    // iterate over courseForm controls and make a new object with form values
+    let newCourse: ICourse = {
+      id: this.getStepGroup(1).get('id')?.value,
+      name: this.getStepGroup(1).get('name')?.value,
+      level: this.getStepGroup(2).get('level')?.value,
+    };
+
+    console.log('New Course:', newCourse);
+
     // check if we have an id in our URL
     let id = this.route.snapshot.paramMap.get('id');
     if (id) {
       // update the course data
-      this.service.updateCourse(parseInt(id), this.courseForm.value).subscribe(
+      this.service.updateCourse(parseInt(id), newCourse).subscribe(
         (response: ICourse) => {
           console.log('Course Updated:', response);
         },
@@ -86,7 +120,7 @@ export class CourseForm implements OnInit {
       );
     } else {
       // create a new course
-      this.service.addCourse(this.courseForm.value).subscribe(
+      this.service.addCourse(newCourse).subscribe(
         (response: ICourse) => {
           console.log('Course Added:', response);
 

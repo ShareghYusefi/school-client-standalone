@@ -1,5 +1,5 @@
 <!-- We need to bind our courseForm instance to the template form using the formGroup directive -->
-<form [formGroup]="courseForm">
+<form [formGroup]="getStepGroup(1)" *ngIf="step === 1">
   <div class="mb-3">
     <label for="name" class="form-label">Course name: </label>
     <!-- We need to bind our input to a form control using the formControlName directive  -->
@@ -19,7 +19,11 @@
         Please type a minimum of 2 characters
       </div>
     </div>
+    <button type="button" (click)="next()">Next</button>
   </div>
+</form>
+
+<form [formGroup]="getStepGroup(2)" *ngIf="step === 2">
   <div class="mb-3">
     <label for="level" class="form-label">Level</label>
     <input
@@ -28,14 +32,15 @@
       id="level"
       formControlName="level"
     />
+    <div
+      *ngIf="level?.errors && level?.invalid && level?.touched"
+      class="text-danger"
+    >
+      <div *ngIf="level?.errors?.['required']">Level is required.</div>
+      <div *ngIf="level?.errors?.['min']">Please select a number above 100</div>
+    </div>
   </div>
-  <div
-    *ngIf="level?.errors && level?.invalid && level?.touched"
-    class="text-danger"
-  >
-    <div *ngIf="level?.errors?.['required']">Level is required.</div>
-    <div *ngIf="level?.errors?.['min']">Please select a number above 100</div>
-  </div>
+  <button type="button" (click)="prev()">Back</button>
   <button
     type="submit"
     class="btn btn-primary"
