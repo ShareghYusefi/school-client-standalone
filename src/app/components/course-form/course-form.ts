@@ -1,5 +1,5 @@
-import { JsonPipe, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { JsonPipe, NgFor, NgIf } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,13 +12,25 @@ import { ICourse } from '../../interfaces/icourse';
 
 @Component({
   selector: 'app-course-form',
-  imports: [JsonPipe, ReactiveFormsModule, NgIf],
+  imports: [JsonPipe, ReactiveFormsModule, NgIf, NgFor],
   templateUrl: './course-form.html',
   styleUrl: './course-form.css',
 })
 export class CourseForm implements OnInit {
   step = 1; // current step
   courseForm!: FormGroup;
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  levels: { label: string; value: string }[] = [
+    { label: '100', value: '100' },
+    { label: '200', value: '200' },
+    { label: '300', value: '300' },
+  ];
+
+  trackByValue(index: number, item: { label: string; value: string }): string {
+    return item.value; // use `value` as the unique key
+  }
 
   // We can use a FormBuilder instance via Dependency injection to create a form group
   constructor(
@@ -30,10 +42,11 @@ export class CourseForm implements OnInit {
     this.courseForm = this.formBuilderInstance.group({
       step1: this.formBuilderInstance.group({
         id: [0],
+        cover: [null, [Validators.required]],
         name: ['', [Validators.required, Validators.minLength(2)]],
       }),
       step2: this.formBuilderInstance.group({
-        level: ['', [Validators.required, Validators.min(100)]],
+        level: [[], [Validators.required]],
       }),
     });
   }
@@ -68,6 +81,7 @@ export class CourseForm implements OnInit {
             this.courseForm.patchValue({
               step1: {
                 id: response.id,
+                cover: response.cover,
                 name: response.name,
               },
               step2: {
@@ -88,8 +102,25 @@ export class CourseForm implements OnInit {
     return this.getStepGroup(1).get('name');
   }
 
+  get cover() {
+    return this.getStepGroup(1).get('cover');
+  }
+
   get level() {
     return this.getStepGroup(2).get('level');
+  }
+
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      const file = input.files[0];
+      // update reactive form control for cover
+      this.getStepGroup(1).patchValue({
+        cover: file,
+      });
+      // check the updateValueAndValidity() method to trigger validation
+      this.getStepGroup(1).get('cover')?.updateValueAndValidity();
+    }
   }
 
   onSubmit() {
@@ -97,20 +128,25 @@ export class CourseForm implements OnInit {
       return;
     }
 
-    // iterate over courseForm controls and make a new object with form values
-    let newCourse: ICourse = {
-      id: this.getStepGroup(1).get('id')?.value,
-      name: this.getStepGroup(1).get('name')?.value,
-      level: this.getStepGroup(2).get('level')?.value,
-    };
+    // create a formData object to allow file upload
+    let formData = new FormData();
+    formData.append('id', this.getStepGroup(1).get('id')?.value);
+    formData.append('name', this.getStepGroup(1).get('name')?.value);
+    formData.append('level', this.getStepGroup(2).get('level')?.value);
 
-    console.log('New Course:', newCourse);
+    // append the cover file if it exists
+    const coverFile = this.getStepGroup(1).get('cover')?.value;
+    if (coverFile && coverFile instanceof File) {
+      formData.append('cover', coverFile);
+    }
+
+    console.log('New Course:', formData);
 
     // check if we have an id in our URL
     let id = this.route.snapshot.paramMap.get('id');
     if (id) {
       // update the course data
-      this.service.updateCourse(parseInt(id), newCourse).subscribe(
+      this.service.updateCourse(parseInt(id), formData).subscribe(
         (response: ICourse) => {
           console.log('Course Updated:', response);
         },
@@ -120,12 +156,14 @@ export class CourseForm implements OnInit {
       );
     } else {
       // create a new course
-      this.service.addCourse(newCourse).subscribe(
+      this.service.addCourse(formData).subscribe(
         (response: ICourse) => {
           console.log('Course Added:', response);
 
           // reset form
           this.courseForm.reset();
+          this.fileInput.nativeElement.value = '';
+          this.step = 1;
         },
         (error) => {
           console.log(error);
