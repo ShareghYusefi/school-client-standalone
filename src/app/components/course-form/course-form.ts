@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Courses } from '../../services/courses';
 import { ICourse } from '../../interfaces/icourse';
+import { FileService } from '../../services/file-service';
 
 @Component({
   selector: 'app-course-form',
@@ -19,6 +20,7 @@ import { ICourse } from '../../interfaces/icourse';
 export class CourseForm implements OnInit {
   step = 1; // current step
   courseForm!: FormGroup;
+  files: File[] = [];
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -36,7 +38,8 @@ export class CourseForm implements OnInit {
   constructor(
     private formBuilderInstance: FormBuilder,
     private route: ActivatedRoute,
-    private service: Courses
+    private service: Courses,
+    private fileService: FileService
   ) {
     // create a form group with two form controls: name, level
     this.courseForm = this.formBuilderInstance.group({
@@ -68,6 +71,9 @@ export class CourseForm implements OnInit {
   }
 
   ngOnInit(): void {
+    // assign files signal value to local files array
+    this.files = this.fileService.files();
+
     // get the course id from current URL via paramMap observable object
     this.route.paramMap.subscribe((params) => {
       // check if id is present in params
@@ -81,7 +87,7 @@ export class CourseForm implements OnInit {
             this.courseForm.patchValue({
               step1: {
                 id: response.id,
-                cover: response.cover,
+                cover: '',
                 name: response.name,
               },
               step2: {
@@ -113,14 +119,24 @@ export class CourseForm implements OnInit {
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
-      const file = input.files[0];
+      this.fileService.addFiles(input.files);
+      // update local files array
+      this.files = this.fileService.files();
+      // update input value to an empty string to allow re-upload of the same file
+      input.value = '';
       // update reactive form control for cover
-      this.getStepGroup(1).patchValue({
-        cover: file,
-      });
+      // this.getStepGroup(1).patchValue({
+      //   cover: this.files[0],
+      // });
       // check the updateValueAndValidity() method to trigger validation
-      this.getStepGroup(1).get('cover')?.updateValueAndValidity();
+      // this.getStepGroup(1).get('cover')?.updateValueAndValidity();
     }
+  }
+
+  remove(file: File) {
+    this.fileService.removeFile(file);
+    // update local files array
+    this.files = this.fileService.files();
   }
 
   onSubmit() {
@@ -135,10 +151,15 @@ export class CourseForm implements OnInit {
     formData.append('level', this.getStepGroup(2).get('level')?.value);
 
     // append the cover file if it exists
-    const coverFile = this.getStepGroup(1).get('cover')?.value;
-    if (coverFile && coverFile instanceof File) {
-      formData.append('cover', coverFile);
-    }
+    // const coverFile = this.getStepGroup(1).get('cover')?.value;
+    // if (coverFile && coverFile instanceof File) {
+    //   formData.append('cover', coverFile);
+    // }
+
+    // append files to formData
+    this.files.forEach((file) => {
+      formData.append('files', file);
+    });
 
     console.log('New Course:', formData);
 

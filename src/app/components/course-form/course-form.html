@@ -36,7 +36,19 @@
       (change)="onFileChange($event)"
       formControlName="cover"
       accept="image/jpeg, image/png, image/jpg, image/gif, image/webp, image/svg+xml"
+      multiple
     />
+    <!-- file list -->
+    <ul>
+      @for (file of files; track file.name) {
+      <li>
+        {{ file.name }} {{ file.size }} bytes
+        <button (click)="remove(file)">Remove</button>
+      </li>
+      } @empty {
+      <li>No files selected.</li>
+      }
+    </ul>
     <div
       *ngIf="cover?.errors && cover?.invalid && cover?.touched"
       class="text-danger"
