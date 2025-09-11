@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Courses } from '../../services/courses';
 import { ICourse } from '../../interfaces/icourse';
 import { FileService } from '../../services/file-service';
@@ -24,28 +24,21 @@ export class CourseForm implements OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  levels: { label: string; value: string }[] = [
-    { label: '100', value: '100' },
-    { label: '200', value: '200' },
-    { label: '300', value: '300' },
-  ];
-
-  trackByValue(index: number, item: { label: string; value: string }): string {
-    return item.value; // use `value` as the unique key
-  }
+  levels: string[] = ['100', '200', '300'];
 
   // We can use a FormBuilder instance via Dependency injection to create a form group
   constructor(
     private formBuilderInstance: FormBuilder,
     private route: ActivatedRoute,
     private service: Courses,
-    private fileService: FileService
+    private fileService: FileService,
+    private router: Router
   ) {
     // create a form group with two form controls: name, level
     this.courseForm = this.formBuilderInstance.group({
       step1: this.formBuilderInstance.group({
         id: [0],
-        cover: [null, [Validators.required]],
+        cover: [null],
         name: ['', [Validators.required, Validators.minLength(2)]],
       }),
       step2: this.formBuilderInstance.group({
@@ -84,15 +77,14 @@ export class CourseForm implements OnInit {
         this.service.getCourse(parseInt(id)).subscribe(
           (response: ICourse) => {
             // update the form with course data
-            this.courseForm.patchValue({
-              step1: {
-                id: response.id,
-                cover: '',
-                name: response.name,
-              },
-              step2: {
-                level: response.level,
-              },
+            this.getStepGroup(1).patchValue({
+              id: response.id,
+              cover: '',
+              name: response.name,
+            });
+
+            this.getStepGroup(2).patchValue({
+              level: response.level,
             });
           },
           (error) => {
@@ -185,6 +177,10 @@ export class CourseForm implements OnInit {
           this.courseForm.reset();
           this.fileInput.nativeElement.value = '';
           this.step = 1;
+          // clear files from file service
+          this.fileService.clearAll();
+          // redirect to home
+          this.router.navigate(['/']);
         },
         (error) => {
           console.log(error);

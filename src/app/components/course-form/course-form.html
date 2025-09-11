@@ -67,19 +67,10 @@
       class="form-select"
       id="level"
       formControlName="level"
-      size="{{ levels.length }}"
     >
       <option disabled>Select an level</option>
-
-      <ng-container *ngFor="let level of levels; trackBy: trackByValue">
-        <option [ngValue]="level.value">{{ level.label }}</option>
-      </ng-container>
-
-      <option
-        *ngFor="let level of levels; trackBy: trackByValue"
-        [ngValue]="level"
-      >
-        {{ level.label }}
+      <option *ngFor="let level of levels" [value]="level">
+        {{ level }}
       </option>
     </select>
     <div
