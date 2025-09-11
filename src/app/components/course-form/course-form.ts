@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Courses } from '../../services/courses';
 import { ICourse } from '../../interfaces/icourse';
 import { FileService } from '../../services/file-service';
+import { IFile } from '../../interfaces/ifile';
 
 @Component({
   selector: 'app-course-form',
@@ -20,7 +21,7 @@ import { FileService } from '../../services/file-service';
 export class CourseForm implements OnInit {
   step = 1; // current step
   courseForm!: FormGroup;
-  files: File[] = [];
+  files: File[] | IFile[] = [];
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -86,6 +87,8 @@ export class CourseForm implements OnInit {
             this.getStepGroup(2).patchValue({
               level: response.level,
             });
+            // update local files array with existing course files
+            this.files = response.files ? response.files : [];
           },
           (error) => {
             console.log(error);
@@ -150,7 +153,7 @@ export class CourseForm implements OnInit {
 
     // append files to formData
     this.files.forEach((file) => {
-      formData.append('files', file);
+      formData.append('files', file as Blob);
     });
 
     console.log('New Course:', formData);
