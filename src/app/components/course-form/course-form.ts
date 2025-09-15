@@ -11,6 +11,7 @@ import { Courses } from '../../services/courses';
 import { ICourse } from '../../interfaces/icourse';
 import { FileService } from '../../services/file-service';
 import { IFile } from '../../interfaces/ifile';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-course-form',
@@ -19,9 +20,10 @@ import { IFile } from '../../interfaces/ifile';
   styleUrl: './course-form.css',
 })
 export class CourseForm implements OnInit {
+  apiUrl = environment.apiUrl;
   step = 1; // current step
   courseForm!: FormGroup;
-  files: File[] | IFile[] = [];
+  files: any[] = []; // Can be native File or IFile objects
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -89,6 +91,8 @@ export class CourseForm implements OnInit {
             });
             // update local files array with existing course files
             this.files = response.files ? response.files : [];
+            // update files signal in file service
+            this.fileService.files.set(this.files);
           },
           (error) => {
             console.log(error);
@@ -128,7 +132,7 @@ export class CourseForm implements OnInit {
     }
   }
 
-  remove(file: File) {
+  remove(file: File | IFile) {
     this.fileService.removeFile(file);
     // update local files array
     this.files = this.fileService.files();
