@@ -42,10 +42,7 @@
     <ul>
       @for (file of files; track file.name) {
       <li>
-        <img
-          [src]="apiUrl + file.path"
-          alt="{{ file.name }}"
-        />
+        <img [src]="apiUrl + '/' + file.path" alt="{{ file.name }}" />
         {{ file.name }} {{ file.size }} bytes
         <button (click)="remove(file)">Remove</button>
       </li>

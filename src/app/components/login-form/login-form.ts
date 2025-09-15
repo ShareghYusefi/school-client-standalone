@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-login-form',
@@ -17,7 +18,7 @@ export class LoginForm implements OnInit {
   // ! tells TypeScript that this property will be initialized later
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   ngOnInit(): void {
     // Initialize form or fetch data if needed
@@ -37,8 +38,18 @@ export class LoginForm implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      console.log('Form Submitted!', this.loginForm.value);
-      // Handle login logic here
+      console.log('Form Submitted!', this.email?.value, this.password?.value);
+      this.authService
+        .login(this.email?.value, this.password?.value)
+        .subscribe({
+          // next is called on success
+          next: (response) => {
+            console.log('Login successful');
+            // Store the JWT token in localStorage within browser
+            localStorage.setItem('jwt_token', response.token);
+          },
+          error: (err) => console.error('Login failed', err),
+        });
     } else {
       console.log('Form is invalid');
     }
