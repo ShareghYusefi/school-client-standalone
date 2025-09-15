@@ -3,6 +3,7 @@ import { Courses } from './components/courses/courses';
 import { Home } from './components/home/home';
 import { NotFound } from './components/not-found/not-found';
 import { CourseForm } from './components/course-form/course-form';
+import { LoginForm } from './components/login-form/login-form';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,11 @@ export const routes: Routes = [
   {
     path: 'courses',
     component: Courses,
+  },
+  // login
+  {
+    path: 'login',
+    component: LoginForm,
   },
   {
     path: 'home',
