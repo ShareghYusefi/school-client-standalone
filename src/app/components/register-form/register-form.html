@@ -1,0 +1,82 @@
+<form
+  (ngSubmit)="onSubmit()"
+  [formGroup]="registerForm"
+  class="w-100 p-4 border rounded shadow-sm bg-white"
+>
+  <h2 class="mb-4 text-center">Register</h2>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email address</label>
+    <input
+      type="email"
+      id="email"
+      class="form-control"
+      required
+      email
+      formControlName="email"
+      #emailRef
+      placeholder="Enter email"
+    />
+    <div *ngIf="email?.invalid && email?.touched" class="text-danger small">
+      <div *ngIf="email?.errors?.['required']">Email is required.</div>
+      <div *ngIf="email?.errors?.['email']">Invalid email format.</div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input
+      type="password"
+      id="password"
+      class="form-control"
+      formControlName="password"
+      required
+      minlength="6"
+      #passwordRef
+      placeholder="Password"
+    />
+    <div
+      *ngIf="password?.invalid && password?.touched"
+      class="text-danger small"
+    >
+      <div *ngIf="password?.errors?.['required']">Password is required.</div>
+      <div *ngIf="password?.errors?.['minlength']">
+        Minimum length is 6 characters.
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="confirmPassword" class="form-label">Confirm Password</label>
+    <input
+      type="password"
+      id="confirmPassword"
+      class="form-control"
+      formControlName="confirmPassword"
+      required
+      minlength="6"
+      #confirmPasswordRef
+      placeholder="Confirm password"
+    />
+    <div
+      *ngIf="confirmPassword?.invalid && confirmPassword?.touched"
+      class="text-danger small"
+    >
+      <div *ngIf="confirmPassword?.errors?.['required']">
+        Confirmation is required.
+      </div>
+      <div *ngIf="confirmPassword?.errors?.['minlength']">
+        Minimum length is 6 characters.
+      </div>
+      <div
+        *ngIf="registerForm?.errors?.['passwordMismatch'] && confirmPassword?.touched"
+      >
+        Passwords do not match.
+      </div>
+    </div>
+  </div>
+  <button
+    type="submit"
+    class="btn btn-success w-100"
+    [disabled]="registerForm.invalid"
+  >
+    Register
+  </button>
+</form>

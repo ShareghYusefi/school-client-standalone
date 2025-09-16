@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-form',
@@ -18,7 +19,11 @@ export class LoginForm implements OnInit {
   // ! tells TypeScript that this property will be initialized later
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     // Initialize form or fetch data if needed
@@ -46,7 +51,9 @@ export class LoginForm implements OnInit {
           next: (response) => {
             console.log('Login successful');
             // Store the JWT token in localStorage within browser
-            localStorage.setItem('jwt_token', response.token);
+            this.authService.saveToken(response.token);
+            // navigate to courses page
+            this.router.navigate(['/courses']);
           },
           error: (err) => console.error('Login failed', err),
         });

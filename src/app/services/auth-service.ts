@@ -8,13 +8,33 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl; // localhost:3000
+  private tokenKey = 'jwt_token';
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/login`, {
+    return this.http.post<any>(`${this.apiUrl}/login`, {
       email, // shorthand for email: email
       password, // shorthand for password: password
     });
+  }
+
+  register(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, {
+      email, // shorthand for email: email
+      password, // shorthand for password: password
+    });
+  }
+
+  saveToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
   }
 }
