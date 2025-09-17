@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { ICourse } from '../interfaces/icourse';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Courses {
-  API_URL = 'http://localhost:3000';
+  private API_URL = environment.apiUrl; // localhost:3000
 
   // We can use a intance of HttpClient object to make API calls for data
   // This is accomplished by importing provideHttpClient module
