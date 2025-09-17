@@ -19,16 +19,32 @@
             >Home</a
           >
         </li>
-        <li class="nav-item">
+        <li *ngIf="isLoggedIn" class="nav-item">
           <a class="nav-link" routerLink="courses">Courses</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-        </li>
       </ul>
+      <button
+        *ngIf="!isLoggedIn"
+        class="btn bt-outline-primary"
+        routerLink="/login"
+      >
+        Login
+      </button>
+      <button
+        *ngIf="!isLoggedIn"
+        class="btn bt-outline-secondary"
+        routerLink="/register"
+      >
+        Register
+      </button>
+      <!-- Logout button -->
+      <button
+        *ngIf="isLoggedIn"
+        class="btn bt-outline-danger"
+        (click)="logout()"
+      >
+        Logout
+      </button>
     </div>
   </div>
 </nav>
